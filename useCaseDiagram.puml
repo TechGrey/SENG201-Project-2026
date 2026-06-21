@@ -1,0 +1,30 @@
+@startuml
+left to right direction
+
+actor Player
+
+rectangle NewGame  {
+    (Visit Market)
+    (Buy Items)
+    (Visit Guild Hall)
+    (Hire Adventurer)
+    (Manage Party)
+    (Use/Equip Item)
+    (View Inventory)
+    (Start Expedition)
+}
+
+Player -- (Visit Market)
+Player -- (Visit Guild Hall)
+Player -- (Manage Party)
+
+(Visit Market) -- (Buy Items)
+(Visit Guild Hall) -- (Hire Adventurer)
+
+(Hire Adventurer) .> (Manage Party): <<extends>>
+
+(Manage Party) -- (Use/Equip Item)
+(Manage Party) -- (Start Expedition)
+(Manage Party) -- (View Inventory)
+
+@enduml

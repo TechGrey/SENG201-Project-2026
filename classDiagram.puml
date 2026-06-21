@@ -1,0 +1,232 @@
+@startuml
+package UI {
+    class UIController {
+        + handleStartGame()
+        + handleExpedition()
+        + handleInventory()
+        + handleMarket()
+    }
+
+    class handleStartGame {
+        + setCharacterValues
+        + setGuildCharacters
+    }
+
+    class handleMarket {
+            + Call MarketService
+                - MarketService.refreshInventory()
+                - MarketService.getAvailableItems()
+                - MarketService.getAvailableAdventurers()
+                - MarketService.buyItem(Item: <Item>)
+                - MarketService.sellItem(Item: <Item>)
+        }
+
+    class handleExpedition {
+        + alterCharacterHealth
+        + alterGuildMemberHealth<Adventurer>
+        + Run Expedition
+    }
+
+    class handleInventory {
+        + Add item to inventory
+        + Displays item HP
+        + Display item inventory list
+
+    }
+
+    UIController --> handleStartGame
+    UIController --> handleExpedition
+    UIController --> handleInventory
+    UIController --> handleMarket
+    handleStartGame --> handleExpedition
+    handleStartGame --> handleInventory
+
+}
+
+package Services {
+    enum Difficulty {
+        EASY
+        MEDIUM
+        HARD
+    }
+
+    class GameEnvironment {
+        - guild: Guild
+        - difficulty: Difficulty
+        - currentExpedition: Expedition
+        - currentRound: Integer
+        - totalRounds: Integer
+        + startGame(): void
+        + startExpedition(e: Expedition): void
+        + endExpedition(): void
+    }
+
+    class AdventurerService {
+        + getAdventurers(): List<Adventurer>
+        + getAdventurers(p: Party): List<Adventurer>
+        + hireAdventurer(a: Adventurer): void
+        + retireAdventurer(a: Adventurer): void
+    }
+
+    class InventoryService {
+        + storeItem(i: Item, oldOwner: Adventurer): void
+        + moveToAdventurer(item: Item, a: Adventurer)
+        + moveToInventory(item: Item)
+    }
+
+    class MarketService {
+        + refreshStock(): void
+        + getAvailableStock(): List<Purchasable>
+        + buyStock(s: Purchasable)
+        + sellStock(s: Purchasable)
+    }
+
+    class ExpeditionService {
+        + runExpedition(exp: Expedition)
+        + resolveEvent(event: Event)
+        + resolveChoice(choice: EventOption)
+    }
+
+    class RandomEventService {
+        + triggerRandomEvent()
+    }
+
+    ' Association
+    GameEnvironment - Difficulty
+    GameEnvironment --> AdventurerService
+    GameEnvironment --> InventoryService
+    GameEnvironment --> MarketService
+    GameEnvironment --> ExpeditionService
+    GameEnvironment --> RandomEventService
+}
+
+package Expeditions {
+    class Expedition {
+        + name: String
+        - possibleEvents: List<Event>
+        - lootMultiplier: double
+        - eventMultiplier: double
+        + getLocalLootMultiplier(): double
+        + getLocalEventMultiplier(): double
+    }
+
+    class Event {
+        + name: String
+        + description: String
+    }
+
+    class EventOption {
+        + name: String
+        + description: String
+    }
+
+    abstract class EventOptionOutcome {
+        + name: String
+        + description: String
+        + probability: double
+        + affect(): void
+    }
+
+    class LootOutcome {
+        - item: Item
+    }
+
+    class GoldOutcome {
+        - gold: double
+    }
+
+    ' Inheritance
+    EventOptionOutcome <|-- LootOutcome
+    EventOptionOutcome <|-- GoldOutcome
+
+    ' Composition
+    Expedition "1" *-- "many" Event:  "contains"
+    Event "1" *-- "0...3" EventOption: "contains"
+    EventOption "1" *-- "many" EventOptionOutcome: "contains"
+}
+
+package Guild {
+    class Guild {
+        - name: String
+        - mainParty: Party
+        - reserveParty: Party
+        - inventory: Inventory
+        - gold: double
+    }
+
+    class Party {
+        - members: List<Adventurer>
+        - maxMembers: Integer
+        + addMember(a: Adventurer): void
+        + removeMember(a: Adventurer): void
+        + moveMember(p: Party, a: Adventurer): void
+        + swapMember(a1: Adventurer, a2: Adventurer): void
+    }
+
+    class Inventory {
+        - items: List<Item>
+        + addItem(i: Item): void
+        + removeItem(i: Item): void
+    }
+
+    abstract class Purchasable {
+        - description: String
+        - cost: double
+    }
+
+    class Adventurer {
+        + name: String
+        + pay: double
+        - baseStats: Stat
+        - bonusStats: Stat
+        + getStats(): Stat
+        ' Optional time application of stats
+        + applyStats(): Stat
+        + applyStats(time: Integer): Stat
+    }
+
+    enum ItemType {
+        TIMED
+        EQUIPMENT
+        PERMANENT
+    }
+
+    abstract class Item {
+        + name: String
+        + type: ItemType
+        + owner: Optional<Adventurer>
+        + stats: Stat
+        + useItem(a: Adventurer): void
+    }
+
+    class SkillItem {}
+    class UpgradeItem {}
+    class EquipmentItem {}
+
+    class Stat {
+        - stamina: Integer
+        - perception: Integer
+        + add(other: Stat): Stat
+    }
+
+    ' Inheritance
+    Purchasable <|-- Adventurer
+    Purchasable <|-- Item
+    Item <|-- SkillItem
+    Item <|-- UpgradeItem
+    Item <|-- EquipmentItem
+
+    ' Association
+    Item - ItemType
+
+    ' Aggregation
+    Guild o-- Party
+    Guild o-- Inventory
+    Adventurer o-- Stat: "baseStats & bonusStats"
+    Item o- Stat: "Stats"
+
+    ' Composition
+    Party "1" *-- "many" Adventurer:  "contains"
+    Inventory "1" *-- "many" Item: "contains"
+}
+@enduml

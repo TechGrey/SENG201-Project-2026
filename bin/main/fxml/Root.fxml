@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0"
+            prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/25"
+            fx:controller="seng201.team99.controllers.MainController"
+>
+    <children>
+        <TabPane tabClosingPolicy="UNAVAILABLE" tabMinWidth="150.0" AnchorPane.bottomAnchor="0.0"
+                 AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
+            <Tab text="Market">
+                <fx:include fx:id="marketTab" source="MarketTab.fxml"/>
+            </Tab>
+            <Tab text="Expedition">
+                <fx:include fx:id="expeditionTab" source="ExpeditionTab.fxml"/>
+            </Tab>
+            <Tab text="Guild">
+                <fx:include fx:id="guildTab" source="GuildTab.fxml"/>
+            </Tab>
+        </TabPane>
+        <ToolBar layoutX="140.0" layoutY="600.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0"
+                 AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <items>
+                <Label text="Guild Gold:">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                </Label>
+                <Label layoutX="10.0" layoutY="16.0" text="Value"/>
+                <Label layoutX="82.0" layoutY="16.0" text="Current Expedition:">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                </Label>
+                <Label layoutX="154.0" layoutY="16.0" text="Value"/>
+                <Label layoutX="120.0" layoutY="16.0" text="Remaining Expeditions:">
+                    <font>
+                        <Font name="System Bold" size="13.0"/>
+                    </font>
+                </Label>
+                <Label layoutX="243.0" layoutY="16.0" text="Value"/>
+            </items>
+        </ToolBar>
+    </children>
+</AnchorPane>

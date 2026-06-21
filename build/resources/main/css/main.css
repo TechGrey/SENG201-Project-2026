@@ -1,0 +1,15 @@
+AnchorPane {}
+
+VBox.item-list {
+    -fx-background-color: aqua;
+}
+
+Label.item-list {
+    -fx-background-color: blue;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: x-large;
+}
+
+HBox.item-list-item {
+    -fx-background-color: aqua;
+}
